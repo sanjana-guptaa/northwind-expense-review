@@ -1,0 +1,89 @@
+[
+  {
+    "submission_id": "01_clean_denver",
+    "expected_overall": "compliant",
+    "out_of_scope_queries": [
+      "Who invented the telephone?",
+      "What is the population of Denver?",
+      "Write me a Python function to sort a list"
+    ],
+    "expected_line_items": [
+      {"receipt_file": "01_united_airlines.pdf", "verdict": "compliant"},
+      {"receipt_file": "02_marriott_denver.pdf", "verdict": "compliant"},
+      {"receipt_file": "03_uber_to_hotel.pdf", "verdict": "compliant"},
+      {"receipt_file": "04_dinner_mercantile.pdf", "verdict": "compliant"},
+      {"receipt_file": "05_breakfast_snooze.pdf", "verdict": "compliant"},
+      {"receipt_file": "06_lunch_sushiden.pdf", "verdict": "compliant"},
+      {"receipt_file": "07_dinner_avanti.pdf", "verdict": "compliant"},
+      {"receipt_file": "08_uber_to_airport.pdf", "verdict": "compliant"}
+    ],
+    "expected_citations": [
+      {"receipt_file": "01_united_airlines.pdf", "section": "2.1"},
+      {"receipt_file": "02_marriott_denver.pdf", "section": "3.1"}
+    ]
+  },
+  {
+    "submission_id": "02_clean_boston_conf",
+    "expected_overall": "compliant",
+    "expected_line_items": [
+      {"receipt_file": "01_conference_registration.pdf", "verdict": "compliant"},
+      {"receipt_file": "02_delta_flight.pdf", "verdict": "compliant"},
+      {"receipt_file": "03_hilton_back_bay.pdf", "verdict": "compliant"},
+      {"receipt_file": "04_lyft_to_hotel.pdf", "verdict": "compliant"},
+      {"receipt_file": "05_lunch_saltie.pdf", "verdict": "compliant"},
+      {"receipt_file": "06_dinner_eastern.pdf", "verdict": "compliant"},
+      {"receipt_file": "07_lyft_to_airport.pdf", "verdict": "compliant"}
+    ],
+    "expected_citations": [
+      {"receipt_file": "02_delta_flight.pdf", "section": "2.1"},
+      {"receipt_file": "03_hilton_back_bay.pdf", "section": "3.1"}
+    ]
+  },
+  {
+    "submission_id": "03_dinner_over_cap",
+    "expected_overall": "flagged",
+    "expected_line_items": [
+      {"receipt_file": "01_american_flight.pdf", "verdict": "compliant"},
+      {"receipt_file": "02_hyatt_chicago.pdf", "verdict": "compliant"},
+      {"receipt_file": "03_uber_to_hotel.pdf", "verdict": "compliant"},
+      {"receipt_file": "04_dinner_alinea.pdf", "verdict": "flagged"},
+      {"receipt_file": "05_breakfast_wildberry.pdf", "verdict": "compliant"},
+      {"receipt_file": "06_lyft_to_airport.pdf", "verdict": "compliant"}
+    ],
+    "expected_citations": [
+      {"receipt_file": "04_dinner_alinea.pdf", "section": "2.1"}
+    ]
+  },
+  {
+    "submission_id": "04_alcohol_solo_travel",
+    "expected_overall": "flagged",
+    "expected_line_items": [
+      {"receipt_file": "01_southwest_flight.pdf", "verdict": "compliant"},
+      {"receipt_file": "02_marriott_austin.pdf", "verdict": "flagged"},
+      {"receipt_file": "03_uber_to_hotel.pdf", "verdict": "compliant"},
+      {"receipt_file": "04_lunch_torchys.pdf", "verdict": "compliant"},
+      {"receipt_file": "05_dinner_franklin.pdf", "verdict": "compliant"},
+      {"receipt_file": "06_breakfast_jos.pdf", "verdict": "compliant"},
+      {"receipt_file": "07_lyft_to_airport.pdf", "verdict": "compliant"}
+    ],
+    "expected_citations": [
+      {"receipt_file": "02_marriott_austin.pdf", "section": "3.1"}
+    ]
+  },
+  {
+    "submission_id": "05_receipt_mismatch",
+    "expected_overall": "flagged",
+    "expected_line_items": [
+      {"receipt_file": "01_alaska_flight.pdf", "verdict": "compliant"},
+      {"receipt_file": "02_hyatt_seattle.pdf", "verdict": "flagged"},
+      {"receipt_file": "03_uber_to_hotel.pdf", "verdict": "compliant"},
+      {"receipt_file": "04_lunch_toulouse.pdf", "verdict": "flagged"},
+      {"receipt_file": "05_dinner_pinkdoor.pdf", "verdict": "compliant"},
+      {"receipt_file": "06_lyft_to_airport.pdf", "verdict": "compliant"}
+    ],
+    "expected_citations": [
+      {"receipt_file": "02_hyatt_seattle.pdf", "section": "3.1"},
+      {"receipt_file": "04_lunch_toulouse.pdf", "section": "2.1"}
+    ]
+  }
+]
