@@ -1,5 +1,7 @@
 from __future__ import annotations
+import asyncio
 import json
+import logging
 import os
 import shutil
 import uuid
@@ -54,14 +56,23 @@ async def lifespan(app: FastAPI):
                 pass
         await session.commit()
 
-        # Warn if policies not indexed
+        # Auto-index policies on first boot (runs in background so startup is non-blocking)
         count = await session.scalar(select(PolicyChunk).limit(1))
         if count is None:
-            import logging
-            logging.getLogger("uvicorn").warning(
-                "policy_chunks table is empty — run: python -m app.indexer"
+            logging.getLogger("uvicorn").info(
+                "policy_chunks table is empty — starting indexer in background"
             )
+            asyncio.ensure_future(_run_indexer_background())
     yield
+
+
+async def _run_indexer_background() -> None:
+    try:
+        from app.indexer import run_indexer
+        await run_indexer()
+        logging.getLogger("uvicorn").info("Background indexing complete.")
+    except Exception as exc:
+        logging.getLogger("uvicorn").error("Background indexer failed: %s", exc)
 
 
 app = FastAPI(title="Northwind Expense Review", lifespan=lifespan)

@@ -1,0 +1,43 @@
+services:
+  - type: web
+    name: northwind-api
+    env: python
+    plan: free
+    region: oregon
+    # Pre-download the embedding model at build time so first-boot indexing is fast
+    buildCommand: >
+      pip install -r requirements.txt &&
+      python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('BAAI/bge-base-en-v1.5')"
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: ANTHROPIC_API_KEY
+        sync: false          # set manually in Render dashboard
+      - key: DATABASE_URL
+        fromDatabase:
+          name: northwind-db
+          property: connectionString
+      - key: POLICIES_DIR
+        value: ./policies
+      - key: SUBMISSIONS_DIR
+        value: ./submissions
+
+  - type: web
+    name: northwind-ui
+    env: python
+    plan: free
+    region: oregon
+    buildCommand: pip install -r requirements.txt
+    startCommand: streamlit run ui/streamlit_app.py --server.port $PORT --server.address 0.0.0.0
+    envVars:
+      - key: API_URL
+        fromService:
+          name: northwind-api
+          type: web
+          property: hostWithScheme
+
+databases:
+  - name: northwind-db
+    plan: free
+    databaseName: northwind
+    user: northwind
+    region: oregon

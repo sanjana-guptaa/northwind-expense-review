@@ -5,7 +5,9 @@ from dotenv import load_dotenv
 
 load_dotenv(override=True)
 
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql+asyncpg://northwind:northwind@localhost:5432/northwind")
+_raw_url = os.getenv("DATABASE_URL", "postgresql+asyncpg://northwind:northwind@localhost:5432/northwind")
+# Render (and some other hosts) supply postgresql:// — asyncpg requires postgresql+asyncpg://
+DATABASE_URL = _raw_url.replace("postgresql://", "postgresql+asyncpg://", 1) if _raw_url.startswith("postgresql://") else _raw_url
 
 engine = create_async_engine(DATABASE_URL, echo=False, pool_pre_ping=True)
 AsyncSessionLocal = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
