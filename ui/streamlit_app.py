@@ -6,7 +6,8 @@ import os
 import httpx
 import streamlit as st
 
-API_URL = os.getenv("API_URL", "http://localhost:8000")
+_api_url = os.getenv("API_URL", "http://localhost:8000")
+API_URL = _api_url if _api_url.startswith("http") else f"https://{_api_url}"
 
 st.set_page_config(
     page_title="Northwind · Expense Review",

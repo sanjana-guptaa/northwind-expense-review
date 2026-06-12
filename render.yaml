@@ -33,7 +33,7 @@ services:
         fromService:
           name: northwind-api
           type: web
-          property: hostWithScheme
+          property: host
 
 databases:
   - name: northwind-db
