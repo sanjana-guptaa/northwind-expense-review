@@ -22,7 +22,7 @@ log = logging.getLogger(__name__)
 POLICIES_DIR = Path(os.getenv("POLICIES_DIR", "./policies"))
 CHUNK_SIZE = 400        # tokens (approx chars/4)
 CHUNK_OVERLAP = 50
-EMBEDDING_MODEL = "BAAI/bge-base-en-v1.5"
+EMBEDDING_MODEL = "BAAI/bge-small-en-v1.5"
 
 HEADING_PATTERNS = [
     re.compile(r"^§\s*[\d][\d.]*", re.MULTILINE),

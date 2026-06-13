@@ -33,7 +33,7 @@ class PolicyChunk(Base):
     section: Mapped[str] = mapped_column(String(100), nullable=False)
     page: Mapped[int] = mapped_column(Integer, nullable=False)
     text: Mapped[str] = mapped_column(Text, nullable=False)
-    embedding: Mapped[list] = mapped_column(Vector(768), nullable=False)
+    embedding: Mapped[list] = mapped_column(Vector(384), nullable=False)
     ts_vec = mapped_column(TSVECTOR, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
 

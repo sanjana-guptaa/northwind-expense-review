@@ -84,7 +84,7 @@ FastAPI REST API (port 8000)
         │          └── image path: .jpg/.png or scanned PDF → vision call
         │
         ├── Retriever (app/retriever.py)
-        │     └── BGE-base-en-v1.5 dense (768-dim, pgvector cosine)
+        │     └── BGE-small-en-v1.5 dense (384-dim, pgvector cosine)
         │         + PostgreSQL BM25 (ts_vector / plainto_tsquery)
         │         fused via RRF (k=60, top-20 each, top-5 final)
         │
@@ -113,9 +113,9 @@ PostgreSQL + pgvector (Docker)
 
 ## Key Design Decisions
 
-### Embedding model: BGE-base-en-v1.5 (768-dim)
+### Embedding model: BGE-small-en-v1.5 (384-dim)
 
-BGE outperforms MiniLM on domain-specific retrieval benchmarks (BEIR) while remaining locally hostable with no API dependency. The 768-dim vectors match pgvector's sweet spot for IVFFlat indexing.
+BGE outperforms MiniLM on domain-specific retrieval benchmarks (BEIR) while remaining locally hostable with no API dependency. The small variant (~130MB, 384-dim) was chosen over BGE-base to fit within free-tier hosting memory constraints (512MB), with minimal retrieval quality loss on short policy text.
 
 ### Hybrid retrieval (dense + BM25, RRF fusion)
 
