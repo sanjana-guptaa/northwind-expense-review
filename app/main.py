@@ -56,23 +56,35 @@ async def lifespan(app: FastAPI):
                 pass
         await session.commit()
 
-        # Auto-index policies on first boot (runs in background so startup is non-blocking)
+        # Auto-index policies on first boot.
+        # Runs in a separate thread with its own event loop so the CPU-heavy
+        # embedding work never blocks the uvicorn event loop.
         count = await session.scalar(select(PolicyChunk).limit(1))
         if count is None:
             logging.getLogger("uvicorn").info(
-                "policy_chunks table is empty — starting indexer in background"
+                "policy_chunks table is empty — starting indexer in background thread"
             )
-            asyncio.ensure_future(_run_indexer_background())
+            _start_indexer_thread()
     yield
 
 
-async def _run_indexer_background() -> None:
-    try:
+def _start_indexer_thread() -> None:
+    import threading
+
+    def _run() -> None:
+        import asyncio as _asyncio
         from app.indexer import run_indexer
-        await run_indexer()
-        logging.getLogger("uvicorn").info("Background indexing complete.")
-    except Exception as exc:
-        logging.getLogger("uvicorn").error("Background indexer failed: %s", exc)
+        loop = _asyncio.new_event_loop()
+        _asyncio.set_event_loop(loop)
+        try:
+            loop.run_until_complete(run_indexer())
+            logging.getLogger("uvicorn").info("Background indexing complete.")
+        except Exception as exc:
+            logging.getLogger("uvicorn").error("Background indexer failed: %s", exc)
+        finally:
+            loop.close()
+
+    threading.Thread(target=_run, daemon=True).start()
 
 
 app = FastAPI(title="Northwind Expense Review", lifespan=lifespan)

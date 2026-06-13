@@ -102,7 +102,7 @@ FastAPI REST API (port 8000)
 
 PostgreSQL + pgvector (Docker)
    ├── employees           ← seeded from employee_info.json on startup
-   ├── policy_chunks       ← 627 chunks, vector(768) + ts_vector
+   ├── policy_chunks       ← 627 chunks, vector(384) + ts_vector
    ├── submissions
    ├── receipts
    ├── verdicts
