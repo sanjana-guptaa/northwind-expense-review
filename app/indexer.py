@@ -149,22 +149,39 @@ async def index_policy(session: AsyncSession, pdf_path: Path, embedder: Sentence
 
 
 async def run_indexer():
-    await init_db()
+    # Always create a fresh engine so this function is safe to call from a
+    # background thread with its own event loop (avoids "attached to a different
+    # loop" errors when the module-level engine was created on uvicorn's loop).
+    from sqlalchemy.ext.asyncio import (
+        create_async_engine, AsyncSession as _AsyncSession, async_sessionmaker,
+    )
+    from sqlalchemy import text as _text
+    from app.database import DATABASE_URL
+    from app.models import Base as _Base
+
+    fresh_engine = create_async_engine(DATABASE_URL, echo=False, pool_pre_ping=True)
+    FreshSession = async_sessionmaker(fresh_engine, class_=_AsyncSession, expire_on_commit=False)
+
+    async with fresh_engine.begin() as conn:
+        await conn.execute(_text("CREATE EXTENSION IF NOT EXISTS vector"))
+        await conn.run_sync(_Base.metadata.create_all)
 
     pdf_files = sorted(POLICIES_DIR.glob("*.pdf"))
     if not pdf_files:
         log.error("No PDF files found in %s", POLICIES_DIR)
+        await fresh_engine.dispose()
         return
 
     log.info("Found %d policy PDFs", len(pdf_files))
     embedder = get_embedder()
 
-    async with AsyncSessionLocal() as session:
+    async with FreshSession() as session:
         total = 0
         for pdf_path in pdf_files:
             n = await index_policy(session, pdf_path, embedder)
             total += n
 
+    await fresh_engine.dispose()
     log.info("Indexing complete. %d new chunks inserted.", total)
 
 
